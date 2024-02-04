@@ -9,7 +9,6 @@ class Game extends Phaser.Scene {
   init(data) {}
 
   preload() {
-    this.load.image('logo', 'assets/phaser3-logo.png');
     this.load.spritesheet('hero-run-sheet', 'assets/hero/run.png', {
       frameWidth: 32,
       frameHeight:64
@@ -28,6 +27,11 @@ class Game extends Phaser.Scene {
     });
 
     this.hero = new Hero(this, 250, 160);
+
+    const platform = this.add.rectangle(220, 240, 260, 10, 0x4BCB7C);
+
+    this.physics.add.existing(platform, false);
+    this.physics.add.collider(this.hero, platform);
   }
 
   update(time, delta) {

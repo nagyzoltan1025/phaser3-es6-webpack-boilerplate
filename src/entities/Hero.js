@@ -17,7 +17,7 @@ class Hero extends Phaser.GameObjects.Sprite {
         this.body.setDragX(750);
 
         this.keys = scene.cursorKeys;
-        this.input = {};
+        this.myInput = {};
 
         this.setupMovement();
     }
@@ -25,7 +25,7 @@ class Hero extends Phaser.GameObjects.Sprite {
     setupMovement() {
         this.moveState = new StateMachine({
             init: 'standing',
-            transition: [
+            transitions: [
                 {name: 'jump', from: 'standing', to: 'jumping'},
                 {name: 'flip', from: 'jumping', to: 'flipping'},
                 {name: 'fall', from: 'standing', to: 'falling'},
@@ -46,10 +46,10 @@ class Hero extends Phaser.GameObjects.Sprite {
 
         this.movePredicates = {
             jump: () => {
-                return this.input.didPressJump;
+                return this.myInput.didPressJump;
             },
             flip: () => {
-                return this.input.didPressJump;
+                return this.myInput.didPressJump;
             },
             fall: () => {
                 return !this.body.onFloor();
@@ -63,7 +63,7 @@ class Hero extends Phaser.GameObjects.Sprite {
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
 
-        this.input.didPressJump = Phaser.Input.Keyboard.JustDown(this.keys.up);
+        this.myInput.didPressJump = Phaser.Input.Keyboard.JustDown(this.keys.up);
 
         if (this.keys.left.isDown) {
             this.body.setAccelerationX(-1000);
