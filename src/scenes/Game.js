@@ -30,7 +30,7 @@ class Game extends Phaser.Scene {
 
     const platform = this.add.rectangle(220, 240, 260, 10, 0x4BCB7C);
 
-    this.physics.add.existing(platform, false);
+    this.physics.add.existing(platform, true);
     this.physics.add.collider(this.hero, platform);
   }
 

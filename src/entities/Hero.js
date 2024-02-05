@@ -20,6 +20,48 @@ class Hero extends Phaser.GameObjects.Sprite {
         this.myInput = {};
 
         this.setupMovement();
+        this.setupHorizontalMovement();
+    }
+
+    setupHorizontalMovement() {
+        this.horizontalMovementState = new StateMachine({
+            init: 'standing',
+            transitions: [
+                {name: 'goRight', from: ['standing', 'movingLeft'], to: 'movingRight'},
+                {name: 'goLeft', from: ['standing', 'movingRight'], to: 'movingLeft'},
+                {name: 'stop', from: ['movingLeft', 'movingRight'], to: 'standing'}
+            ],
+            methods: {
+                onEnterState: (lifecycle) => {
+                    console.log(lifecycle);
+                },
+                onGoRight: () => {
+                    this.body.setAccelerationX(1000);
+                    this.setFlipX(false);
+                    this.body.offset.x = 12;
+                },
+                onGoLeft: () => {
+                    this.body.setAccelerationX(-1000);
+                    this.setFlipX(true);
+                    this.body.offset.x = 8;
+                },
+                onStop: () => {
+                    this.body.setAccelerationX(0);
+                }
+            }
+        });
+
+        this.horizontalMovePredicates = {
+            goLeft: () => {
+                return this.myInput.keys.left.isDown;
+            },
+            goRight: () => {
+                return this.myInput.keys.right.isDown;
+            },
+            stop: () => {
+                return !this.myInput.keys.left.isDown && !this.myInput.keys.right.isDown;
+            },
+        }
     }
 
     setupMovement() {
@@ -64,17 +106,13 @@ class Hero extends Phaser.GameObjects.Sprite {
         super.preUpdate(time, delta);
 
         this.myInput.didPressJump = Phaser.Input.Keyboard.JustDown(this.keys.up);
+        this.myInput.keys = this.keys;
 
-        if (this.keys.left.isDown) {
-            this.body.setAccelerationX(-1000);
-            this.setFlipX(true);
-            this.body.offset.x = 8;
-        } else if (this.keys.right.isDown) {
-            this.body.setAccelerationX(1000);
-            this.setFlipX(false);
-            this.body.offset.x = 12;
-        } else {
-            this.body.setAccelerationX(0);
+        for (const t of this.horizontalMovementState.transitions()) {
+            if (t in this.horizontalMovePredicates && this.horizontalMovePredicates[t]()) {
+                this.horizontalMovementState[t]();
+                break;
+            }
         }
 
         for (const t of this.moveState.transitions()) {
