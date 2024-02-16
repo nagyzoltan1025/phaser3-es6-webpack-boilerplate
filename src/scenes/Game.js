@@ -40,13 +40,14 @@ class Game extends Phaser.Scene {
     });
   }
 
-  create(data) {
+  create(_) {
 
     this.cursorKeys = this.input.keyboard.createCursorKeys();
 
     this.anims.create({
       key: 'hero-running',
       frames: this.anims.generateFrameNumbers('hero-run-sheet'),
+      repeat: -1
     });
 
     this.anims.create({
