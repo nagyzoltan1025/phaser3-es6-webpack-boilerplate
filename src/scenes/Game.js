@@ -90,17 +90,38 @@ class Game extends Phaser.Scene {
 
         this.addMap();
 
+        this.addHero();
+
+        this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
+        this.cameras.main.startFollow(this.hero);
+    }
+
+    addHero() {
         this.hero = new Hero(this, 250, 160);
+
+        this.children.moveTo(this.hero, this.children.getIndex(this.map.getLayer('Foreground').tilemapLayer));
+
+        this.physics.add.collider(this.hero, this.map.getLayer('Ground').tilemapLayer);
     }
 
     update(time, delta) {
     }
 
     addMap() {
-        this.map = this.make.tilemap({ key: 'level-1' });
+        this.map = this.make.tilemap({key: 'level-1'});
         const groundTiles = this.map.addTilesetImage('world-1', 'world-1-sheet');
 
-        this.map.createLayer('Ground', groundTiles);
+        const groundLayer = this.map.createLayer('Ground', groundTiles);
+        // [1,2,4] array comes from world-1.png. these are the tiles which we want to collide with
+        groundLayer.setCollision([1, 2, 4], true);
+
+        this.map.createLayer('Foreground', groundTiles);
+
+        this.physics.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
+        this.physics.world.setBoundsCollision(true, true, false, true);
+
+        // const debugGraphics = this.add.graphics();
+        // groundLayer.renderDebug(debugGraphics);
     }
 }
 
