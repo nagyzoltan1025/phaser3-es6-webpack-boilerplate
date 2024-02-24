@@ -1,12 +1,4 @@
 { "compressionlevel":-1,
- "editorsettings":
-    {
-     "export":
-        {
-         "format":"tmx",
-         "target":"level-1..tmx"
-        }
-    },
  "height":14,
  "infinite":false,
  "layers":[
