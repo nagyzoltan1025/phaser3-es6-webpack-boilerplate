@@ -15,7 +15,7 @@ export default {
   },
   audio: {
     noAudio: true
-  }
+  },
   physics: {
     default: 'arcade',
     arcade: {
