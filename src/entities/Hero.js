@@ -56,10 +56,10 @@ class Hero extends Phaser.GameObjects.Sprite {
 
         this.horizontalMovePredicates = {
             goLeft: () => {
-                return this.myInput.keys.left.isDown;
+                return !this.isDead() && this.myInput.keys.left.isDown;
             },
             goRight: () => {
-                return this.myInput.keys.right.isDown;
+                return !this.isDead() && this.myInput.keys.right.isDown;
             },
             stop: () => {
                 return !this.myInput.keys.left.isDown && !this.myInput.keys.right.isDown;
@@ -76,7 +76,8 @@ class Hero extends Phaser.GameObjects.Sprite {
                 {name: 'pivot', from: ['falling', 'running'], to: 'pivoting'},
                 {name: 'jump', from: ['idle', 'running', 'pivoting'], to: 'jumping'},
                 {name: 'flip', from: ['jumping', 'falling'], to: 'flipping'},
-                {name: 'fall', from: '*', to: 'falling'},
+                {name: 'fall', from: ['idle', 'running', 'pivoting', 'flipping','jumping'], to: 'falling'},
+                {name: 'die', from: '*', to: 'dead'},
             ],
             methods: {
                 onEnterState: (lifecycle) => {
@@ -117,6 +118,7 @@ class Hero extends Phaser.GameObjects.Sprite {
                 {name: 'flip', from: 'jumping', to: 'flipping'},
                 {name: 'fall', from: 'standing', to: 'falling'},
                 {name: 'touchdown', from: ['jumping', 'flipping', 'falling'], to: 'standing'},
+                {name: 'die', from: '*', to: 'dead'},
             ],
             methods: {
                 onEnterState: (lifecycle) => {
@@ -128,6 +130,10 @@ class Hero extends Phaser.GameObjects.Sprite {
                 onFlip: () => {
                     this.body.setVelocityY(-300);
                 },
+                onDie: () => {
+                    this.body.setVelocity(0, -500);
+                    this.body.setAcceleration(0);
+                }
             },
         });
 
@@ -147,10 +153,19 @@ class Hero extends Phaser.GameObjects.Sprite {
         }
     }
 
+    kill() {
+        this.moveState.die();
+        this.animState.die();
+    }
+
+    isDead() {
+        return this.moveState.is('dead');
+    }
+
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
 
-        this.myInput.didPressJump = Phaser.Input.Keyboard.JustDown(this.keys.up);
+        this.myInput.didPressJump = !this.isDead() && Phaser.Input.Keyboard.JustDown(this.keys.up);
         this.myInput.keys = this.keys;
 
         for (const t of this.horizontalMovementState.transitions()) {
