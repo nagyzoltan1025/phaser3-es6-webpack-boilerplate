@@ -57,6 +57,7 @@ class Game extends Phaser.Scene {
     }
 
     create(_) {
+        this.isSlowMontionActive = false;
 
         this.cursorKeys = this.input.keyboard.createCursorKeys();
 
@@ -128,6 +129,10 @@ class Game extends Phaser.Scene {
             this.hero.body.setCollideWorldBounds(false);
             this.cameras.main.stopFollow();
         });
+
+        this.hero.on('activateSlowMotion', () => {
+            this.switchSlowMotion();
+        })
     }
 
     update(time, delta) {
@@ -170,6 +175,17 @@ class Game extends Phaser.Scene {
         this.map.createLayer('Foreground', groundTiles);
         // const debugGraphics = this.add.graphics();
         // groundLayer.renderDebug(debugGraphics);
+    }
+
+    switchSlowMotion() {
+        if (this.isSlowMontionActive) {
+            this.physics.world.timeScale = 1.0;
+            this.anims.globalTimeScale = 1.0;
+        } else {
+            this.physics.world.timeScale = 2.0;
+            this.anims.globalTimeScale = 0.5;
+        }
+        this.isSlowMontionActive = !this.isSlowMontionActive;
     }
 }
 

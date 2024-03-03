@@ -20,10 +20,12 @@ class Hero extends Phaser.GameObjects.Sprite {
 
         this.keys = scene.cursorKeys;
         this.myInput = {};
+        this.myInput.slowMotionKey = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
 
         this.setupMovement();
         this.setupHorizontalMovement();
         this.setupAnimation();
+
     }
 
     setupHorizontalMovement() {
@@ -169,7 +171,12 @@ class Hero extends Phaser.GameObjects.Sprite {
         super.preUpdate(time, delta);
 
         this.myInput.didPressJump = !this.isDead() && Phaser.Input.Keyboard.JustDown(this.keys.up);
+        this.myInput.didPressSlowMotionKey = Phaser.Input.Keyboard.JustDown(this.myInput.slowMotionKey);
         this.myInput.keys = this.keys;
+
+        if (this.myInput.didPressSlowMotionKey) {
+            this.emit('activateSlowMotion');
+        }
 
         for (const t of this.horizontalMovementState.transitions()) {
             if (t in this.horizontalMovePredicates && this.horizontalMovePredicates[t]()) {
