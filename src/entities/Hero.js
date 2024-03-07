@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import StateMachine from 'javascript-state-machine';
+import Bar from "./Bar";
 
 class Hero extends Phaser.GameObjects.Sprite {
 
@@ -25,7 +26,14 @@ class Hero extends Phaser.GameObjects.Sprite {
         this.setupMovement();
         this.setupHorizontalMovement();
         this.setupAnimation();
+        this.setupSlowMotionBar();
 
+    }
+
+    setupSlowMotionBar() {
+        this.slowMotionBar = new Bar(this.scene, 0, 0);
+        this.slowMotionBar.draw();
+        this.slowMotionBar.bar.setScrollFactor(0, 0);
     }
 
     setupHorizontalMovement() {
@@ -174,7 +182,16 @@ class Hero extends Phaser.GameObjects.Sprite {
         this.myInput.didPressSlowMotionKey = Phaser.Input.Keyboard.JustDown(this.myInput.slowMotionKey);
         this.myInput.keys = this.keys;
 
-        if (this.myInput.didPressSlowMotionKey) {
+        if (this.scene.isSlowMontionActive) {
+            this.slowMotionBar.decrease(1);
+            if (this.slowMotionBar.value <= 0) {
+                this.emit('activateSlowMotion');
+            }
+        } else {
+            this.slowMotionBar.increase(0.2);
+        }
+
+        if (this.myInput.didPressSlowMotionKey && this.slowMotionBar.value > 0) {
             this.emit('activateSlowMotion');
         }
 

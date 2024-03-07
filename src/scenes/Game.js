@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import Hero from '../entities/Hero';
+import Bar from "../entities/Bar";
 
 class Game extends Phaser.Scene {
     constructor() {
@@ -110,6 +111,16 @@ class Game extends Phaser.Scene {
         this.addHero();
 
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
+
+    }
+
+    update(time, delta) {
+        const cameraBottom = this.cameras.main.getWorldPoint(0, this.cameras.main.height).y;
+
+        if (this.hero.isDead() && this.hero.getBounds().top > cameraBottom + 100) {
+            this.hero.destroy();
+            this.addHero();
+        }
     }
 
     addHero() {
@@ -133,15 +144,6 @@ class Game extends Phaser.Scene {
         this.hero.on('activateSlowMotion', () => {
             this.switchSlowMotion();
         })
-    }
-
-    update(time, delta) {
-        const cameraBottom = this.cameras.main.getWorldPoint(0, this.cameras.main.height).y;
-
-        if (this.hero.isDead() && this.hero.getBounds().top > cameraBottom + 100) {
-            this.hero.destroy();
-            this.addHero();
-        }
     }
 
     addMap() {
@@ -173,8 +175,6 @@ class Game extends Phaser.Scene {
         });
 
         this.map.createLayer('Foreground', groundTiles);
-        // const debugGraphics = this.add.graphics();
-        // groundLayer.renderDebug(debugGraphics);
     }
 
     switchSlowMotion() {
