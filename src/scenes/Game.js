@@ -1,6 +1,5 @@
 import Phaser from 'phaser';
 import Hero from '../entities/Hero';
-import Bar from "../entities/Bar";
 
 class Game extends Phaser.Scene {
     constructor() {
@@ -11,6 +10,8 @@ class Game extends Phaser.Scene {
     }
 
     preload() {
+        this.load.audio('heartbeat', ['assets/audio/heartbeat.mp3']);
+
         this.load.tilemapTiledJSON('level-1', 'assets/tilemaps/level-1.json');
 
         this.load.spritesheet('world-1-sheet', 'assets/tileset/world-1.png', {
@@ -18,8 +19,10 @@ class Game extends Phaser.Scene {
             frameHeight: 32,
             margin: 1,
             spacing: 2
-        })
-        this.load.image('clouds-sheet', 'assets/tileset/clouds.png')
+        });
+
+        this.load.image('clouds-sheet', 'assets/tileset/clouds.png');
+
 
         this.load.spritesheet('hero-idle-sheet', 'assets/hero/idle.png', {
             frameWidth: 32,
@@ -61,6 +64,8 @@ class Game extends Phaser.Scene {
         this.isSlowMontionActive = false;
 
         this.cursorKeys = this.input.keyboard.createCursorKeys();
+
+        this.heartBeatSound = this.sound.add('heartbeat');
 
         this.anims.create({
             key: 'hero-running',
@@ -186,6 +191,7 @@ class Game extends Phaser.Scene {
             this.anims.globalTimeScale = 0.5;
         }
         this.isSlowMontionActive = !this.isSlowMontionActive;
+        this.heartBeatSound.isPlaying ? this.heartBeatSound.stop() : this.heartBeatSound.play();
     }
 }
 

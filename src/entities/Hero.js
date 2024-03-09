@@ -46,7 +46,6 @@ class Hero extends Phaser.GameObjects.Sprite {
             ],
             methods: {
                 onEnterState: (lifecycle) => {
-                    console.log(lifecycle);
                 },
                 onGoRight: () => {
                     this.body.setAccelerationX(1000);
@@ -93,7 +92,6 @@ class Hero extends Phaser.GameObjects.Sprite {
                 onEnterState: (lifecycle) => {
                     const heroAnimation = 'hero-' + lifecycle.to
                     this.anims.play(heroAnimation);
-                    console.log(lifecycle);
                 },
             }
         });
@@ -132,7 +130,6 @@ class Hero extends Phaser.GameObjects.Sprite {
             ],
             methods: {
                 onEnterState: (lifecycle) => {
-                    console.log(lifecycle);
                 },
                 onJump: () => {
                     this.body.setVelocityY(-400);
@@ -183,7 +180,7 @@ class Hero extends Phaser.GameObjects.Sprite {
         this.myInput.keys = this.keys;
 
         if (this.scene.isSlowMontionActive) {
-            this.slowMotionBar.decrease(1);
+            this.slowMotionBar.decrease(0.5);
             if (this.slowMotionBar.value <= 0) {
                 this.emit('activateSlowMotion');
             }
