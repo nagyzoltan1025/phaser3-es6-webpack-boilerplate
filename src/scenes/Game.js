@@ -202,7 +202,7 @@ class Game extends Phaser.Scene {
     }
 
     handleSlowMotionStartAudio() {
-        this.cameras.main.flash(500, 100,255,255);
+        this.cameras.main.flash(750, 173, 216, 230);
         this.slowMotionStartSound.play();
     }
 
