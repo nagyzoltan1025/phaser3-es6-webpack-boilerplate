@@ -11,6 +11,8 @@ class Game extends Phaser.Scene {
 
     preload() {
         this.load.audio('heartbeat', ['assets/audio/heartbeat.mp3']);
+        this.load.audio('slow-motion-start', ['assets/audio/explosion-drop-cut.mp3']);
+        this.load.audio('slow-motion-stop', ['assets/audio/explosion-drop-cut-reverse.mp3']);
 
         this.load.tilemapTiledJSON('level-1', 'assets/tilemaps/level-1.json');
 
@@ -66,6 +68,11 @@ class Game extends Phaser.Scene {
         this.cursorKeys = this.input.keyboard.createCursorKeys();
 
         this.heartBeatSound = this.sound.add('heartbeat');
+        this.slowMotionStartSound = this.sound.add('slow-motion-start');
+        this.slowMotionStopSound = this.sound.add('slow-motion-stop');
+        this.slowMotionStopSound.setRate(1.5);
+
+        this.slowMotionStartSound.addListener(Phaser.Sound.Events.COMPLETE, () => this.heartBeatSound.play());
 
         this.anims.create({
             key: 'hero-running',
@@ -191,7 +198,18 @@ class Game extends Phaser.Scene {
             this.anims.globalTimeScale = 0.5;
         }
         this.isSlowMontionActive = !this.isSlowMontionActive;
-        this.heartBeatSound.isPlaying ? this.heartBeatSound.stop() : this.heartBeatSound.play();
+        this.isSlowMontionActive ? this.handleSlowMotionStartAudio() : this.handleSlowMotionStopAudio();
+    }
+
+    handleSlowMotionStartAudio() {
+        this.cameras.main.flash(500, 100,255,255);
+        this.slowMotionStartSound.play();
+    }
+
+    handleSlowMotionStopAudio() {
+        this.slowMotionStartSound.stop();
+        this.heartBeatSound.stop();
+        this.slowMotionStopSound.play();
     }
 }
 
